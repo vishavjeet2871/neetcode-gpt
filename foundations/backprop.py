@@ -1,23 +1,30 @@
 import numpy as np
 from numpy.typing import NDArray
+from typing import Tuple
 
 
 class Solution:
-    def forward(self, x: NDArray[np.float64], w: NDArray[np.float64], b: float, activation: str) -> float:
+    def backward(self, x: NDArray[np.float64], w: NDArray[np.float64], b: float, y_true: float) -> Tuple[NDArray[np.float64], float]:
         # x: 1D input array
-        # w: 1D weight array (same length as x)
+        # w: 1D weight array
         # b: scalar bias
-        # activation: "sigmoid" or "relu"
+        # y_true: true target value
         #
-        # Pre-activation: z = dot(x, w) + b
-        # Sigmoid: σ(z) = 1 / (1 + exp(-z))
-        # ReLU: max(0, z)
-        # return round(your_answer, 5)
-        weights_sum=np.sum(x*w);
+        # Forward: z = dot(x, w) + b, y_hat = sigmoid(z)
+        # Loss: L = 0.5 * (y_hat - y_true)^2
+        # Return: (dL_dw rounded to 5 decimals, dL_db rounded to 5 decimals)
         def sigmoid(a):
             return 1/(1+np.exp(-a))
-        def relu(a):
-            return max(0.0,a)
-        if activation=="sigmoid":
-            return round(sigmoid(weights_sum+b),5)
-        return round(relu(weights_sum+b),5)
+        z=np.sum(x*w)+b
+        y_hat=sigmoid(z)
+        l=0.5*((y_hat-y_true)**2)
+        delta=y_hat*(1-y_hat)
+        dl_dw=((y_hat-y_true)*delta)*x
+        dl_b=((y_hat-y_true)*delta)
+        return (np.round(dl_dw,5),round(dl_b,5))
+
+
+
+
+        
+        
